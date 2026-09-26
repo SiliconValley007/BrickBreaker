@@ -4,14 +4,24 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
     />
     <meta name="theme-color" content="#05060f" />
+    <meta name="color-scheme" content="dark" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
     <meta
       name="description"
       content="NEON BREAK — a high-performance Breakout arcade game"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305060f'/%3E%3Crect x='4' y='6' width='24' height='6' rx='2' fill='%2300f0ff'/%3E%3Crect x='4' y='14' width='24' height='6' rx='2' fill='%23ff2bd6'/%3E%3Crect x='10' y='24' width='12' height='3' rx='1.5' fill='%23fff'/%3E%3C/svg%3E"
     />
     <title>NEON BREAK</title>
     <style>
@@ -28,6 +38,10 @@
         --safe-b: env(safe-area-inset-bottom, 0px);
         --safe-l: env(safe-area-inset-left, 0px);
         --safe-r: env(safe-area-inset-right, 0px);
+        --vv-t: 0px;
+        --vv-r: 0px;
+        --vv-b: 0px;
+        --vv-l: 0px;
       }
       * {
         box-sizing: border-box;
@@ -39,6 +53,7 @@
       body {
         width: 100%;
         height: 100%;
+        height: 100dvh;
         overflow: hidden;
         background: var(--bg);
         color: var(--txt);
@@ -50,36 +65,42 @@
           sans-serif;
         touch-action: none;
         user-select: none;
-      }
-      body {
-        padding: var(--safe-t) var(--safe-r) var(--safe-b) var(--safe-l);
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        overscroll-behavior: none;
       }
       canvas {
         display: block;
         width: 100%;
         height: 100%;
         position: fixed;
-        inset: 0;
+        left: 0;
+        top: 0;
+        right: auto;
+        bottom: auto;
         cursor: none;
+        touch-action: none;
       }
       .hud {
         position: fixed;
-        top: calc(10px + var(--safe-t));
-        left: calc(14px + var(--safe-l));
-        right: calc(70px + var(--safe-r));
+        top: calc(8px + var(--safe-t) + var(--vv-t));
+        left: calc(10px + var(--safe-l) + var(--vv-l));
+        right: calc(62px + var(--safe-r) + var(--vv-r));
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         pointer-events: none;
         z-index: 2;
-        gap: 8px;
+        gap: 6px;
       }
       .stat {
         background: var(--panel);
         border: 1px solid rgba(0, 240, 255, 0.22);
         border-radius: 10px;
-        padding: 8px 12px;
-        min-width: 72px;
+        padding: 6px 10px;
+        min-width: 0;
+        flex: 1 1 0;
+        max-width: 120px;
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
       }
@@ -144,7 +165,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 24px;
+        padding: calc(20px + var(--safe-t) + var(--vv-t))
+          calc(16px + var(--safe-r) + var(--vv-r))
+          calc(20px + var(--safe-b) + var(--vv-b))
+          calc(16px + var(--safe-l) + var(--vv-l));
         background: radial-gradient(
           ellipse at 50% 40%,
           rgba(10, 16, 48, 0.55),
@@ -197,7 +221,9 @@
       }
       .btn {
         appearance: none;
+        -webkit-appearance: none;
         border: 0;
+        touch-action: manipulation;
         cursor: pointer;
         min-height: 48px;
         min-width: 180px;
@@ -246,11 +272,11 @@
       }
       .pause-btn {
         position: fixed;
-        top: calc(10px + var(--safe-t));
-        right: calc(14px + var(--safe-r));
+        top: calc(8px + var(--safe-t) + var(--vv-t));
+        right: calc(10px + var(--safe-r) + var(--vv-r));
         z-index: 6;
-        width: 48px;
-        height: 48px;
+        width: 44px;
+        height: 44px;
         border-radius: 12px;
         border: 1px solid rgba(0, 240, 255, 0.28);
         background: var(--panel);
@@ -259,6 +285,7 @@
         font-size: 16px;
         letter-spacing: 0.04em;
         display: none;
+        touch-action: manipulation;
       }
       .pause-btn.show {
         display: grid;
@@ -273,9 +300,54 @@
           transition: none !important;
         }
       }
+      @media (max-height: 480px) {
+        #combo {
+          top: 28%;
+          font-size: 16px;
+        }
+        .hud {
+          top: calc(4px + var(--safe-t) + var(--vv-t));
+          left: calc(8px + var(--safe-l) + var(--vv-l));
+          right: calc(52px + var(--safe-r) + var(--vv-r));
+        }
+        .stat {
+          padding: 4px 8px;
+        }
+        .stat b {
+          font-size: 13px;
+        }
+        .stat span {
+          font-size: 8px;
+        }
+        .lives {
+          height: 12px;
+          margin-top: 0;
+        }
+        .pip {
+          width: 7px;
+          height: 7px;
+        }
+        .pause-btn {
+          width: 40px;
+          height: 40px;
+          top: calc(4px + var(--safe-t) + var(--vv-t));
+          right: calc(8px + var(--safe-r) + var(--vv-r));
+        }
+        .card {
+          padding: 16px 16px 14px;
+        }
+        h1 {
+          font-size: clamp(22px, 7vw, 36px);
+          margin-bottom: 4px;
+        }
+        .hint {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
+    <noscript>Enable JavaScript to play NEON BREAK.</noscript>
     <canvas id="c" aria-label="NEON BREAK game stage"></canvas>
     <div class="hud" id="hud" hidden>
       <div class="stat"><b id="score">0</b><span>Score</span></div>
@@ -299,7 +371,7 @@
         <button class="btn" id="action" type="button">Play</button>
         <button class="btn ghost" id="muteBtn" type="button">Sound On</button>
         <p class="hint" id="hint">
-          Desktop: mouse / A D / arrows, Space to launch or pause<br />Mobile:
+          Desktop: mouse / A D / arrows — click or Space to launch<br />Mobile:
           drag paddle, tap to launch
         </p>
       </div>
@@ -308,10 +380,15 @@
       (function () {
         "use strict";
         const cvs = document.getElementById("c");
-        const ctx = cvs.getContext("2d", {
-          alpha: false,
-          desynchronized: true,
-        });
+        const ctx =
+          cvs.getContext("2d", {
+            alpha: false,
+            desynchronized: true,
+          }) || cvs.getContext("2d");
+        if (!ctx) {
+          document.body.textContent = "Canvas is required to play NEON BREAK.";
+          return;
+        }
         const overlay = document.getElementById("overlay");
         const titleEl = document.getElementById("title");
         const tagEl = document.getElementById("tag");
@@ -332,20 +409,58 @@
           MAX_STARS = 90;
         const COLS_BASE = 9,
           ROWS_BASE = 5;
-        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const reduce = !!(
+          window.matchMedia &&
+          matchMedia("(prefers-reduced-motion: reduce)").matches
+        );
+
+        function clamp(v, a, b) {
+          return v < a ? a : v > b ? b : v;
+        }
+        function loadBest() {
+          try {
+            return +localStorage.getItem("nb_best") || 0;
+          } catch (e) {
+            return 0;
+          }
+        }
+        function saveBest(v) {
+          try {
+            localStorage.setItem("nb_best", v);
+          } catch (e) {}
+        }
+        function loadMute() {
+          try {
+            return localStorage.getItem("nb_mute") === "1";
+          } catch (e) {
+            return false;
+          }
+        }
+        function saveMute() {
+          try {
+            localStorage.setItem("nb_mute", muted ? "1" : "0");
+          } catch (e) {}
+        }
 
         let W = 0,
           H = 0,
           dpr = 1,
           state = STATE.TITLE,
           running = false;
+        let insetL = 0,
+          insetR = 0,
+          insetT = 0,
+          insetB = 0,
+          playL = 0,
+          playR = 0,
+          playT = 0;
         let score = 0,
-          best = +localStorage.getItem("nb_best") || 0,
+          best = loadBest(),
           lives = 3,
           level = 1,
           combo = 0,
           comboT = 0;
-        let muted = false,
+        let muted = loadMute(),
           ac = null,
           master = null;
         let px = 0,
@@ -428,7 +543,11 @@
           if (ac) return;
           const C = window.AudioContext || window.webkitAudioContext;
           if (!C) return;
-          ac = new C();
+          try {
+            ac = new C();
+          } catch (e) {
+            return;
+          }
           master = ac.createGain();
           master.gain.value = 0.22;
           master.connect(ac.destination);
@@ -457,7 +576,11 @@
           if (muted) return;
           audioCtx();
           if (!ac) return;
-          if (ac.state === "suspended") ac.resume();
+          if (ac.state === "suspended") {
+            try {
+              ac.resume();
+            } catch (e) {}
+          }
           if (kind === 1) tone(620, 0.05, "square", 0.08);
           else if (kind === 2) tone(180, 0.08, "triangle", 0.12, 90);
           else if (kind === 3) {
@@ -472,54 +595,123 @@
           } else if (kind === 6) tone(340, 0.06, "sine", 0.07);
         }
 
+        function readInsets() {
+          const probe = document.createElement("div");
+          probe.style.cssText =
+            "position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)";
+          document.body.appendChild(probe);
+          const s = getComputedStyle(probe);
+          insetT = parseFloat(s.paddingTop) || 0;
+          insetR = parseFloat(s.paddingRight) || 0;
+          insetB = parseFloat(s.paddingBottom) || 0;
+          insetL = parseFloat(s.paddingLeft) || 0;
+          document.body.removeChild(probe);
+        }
+
         function fit() {
-          const rect = document.documentElement;
-          W = rect.clientWidth;
-          H = rect.clientHeight;
-          dpr = Math.min(window.devicePixelRatio || 1, 2);
-          cvs.width = (W * dpr) | 0;
-          cvs.height = (H * dpr) | 0;
+          const vv = window.visualViewport;
+          W = Math.max(
+            1,
+            (vv && vv.width) ||
+              window.innerWidth ||
+              document.documentElement.clientWidth,
+          );
+          H = Math.max(
+            1,
+            (vv && vv.height) ||
+              window.innerHeight ||
+              document.documentElement.clientHeight,
+          );
+          const root = document.documentElement;
+          if (vv) {
+            const vx = vv.offsetLeft || 0;
+            const vy = vv.offsetTop || 0;
+            cvs.style.left = vx + "px";
+            cvs.style.top = vy + "px";
+            root.style.setProperty("--vv-l", vx + "px");
+            root.style.setProperty("--vv-t", vy + "px");
+            root.style.setProperty("--vv-r", "0px");
+            root.style.setProperty("--vv-b", "0px");
+          } else {
+            cvs.style.left = "0px";
+            cvs.style.top = "0px";
+            root.style.setProperty("--vv-l", "0px");
+            root.style.setProperty("--vv-t", "0px");
+            root.style.setProperty("--vv-r", "0px");
+            root.style.setProperty("--vv-b", "0px");
+          }
+          dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+          cvs.width = Math.max(1, (W * dpr) | 0);
+          cvs.height = Math.max(1, (H * dpr) | 0);
           cvs.style.width = W + "px";
           cvs.style.height = H + "px";
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          readInsets();
           needResize = 1;
         }
 
         function layoutPlay() {
-          const m = Math.max(10, Math.min(W, H) * 0.03);
-          const hudH = Math.max(58, H * 0.09);
-          const fieldW = W - m * 2;
-          const fieldH = H - hudH - m * 1.6;
+          const mL = Math.max(10, insetL + 8, Math.min(W, H) * 0.02);
+          const mR = Math.max(10, insetR + 8, Math.min(W, H) * 0.02);
+          const mB = Math.max(12, insetB + 10, H * 0.02);
+          playL = mL;
+          playR = mR;
+          playT = insetT + 4;
+          const compact = H < 480;
+          const hudH = insetT + (compact ? 44 : Math.max(56, H * 0.085));
+          const fieldW = W - mL - mR;
           ph = Math.max(10, Math.min(16, H * 0.018));
-          pw = Math.max(72, Math.min(W * 0.22, 140 - level * 3));
-          pw = Math.max(64, pw);
-          br = Math.max(6, Math.min(9, W * 0.012));
-          py = H - m - ph - Math.max(18, H * 0.04);
+          pw = Math.max(64, Math.min(W * 0.28, 148 - level * 3, fieldW * 0.42));
+          br = Math.max(5, Math.min(9, Math.min(W, H) * 0.012));
+          py = H - mB - ph - (compact ? 6 : 8);
           if (!launched) {
             px = W * 0.5 - pw * 0.5;
             ptx = px;
           }
-          px = Math.max(m, Math.min(W - m - pw, px));
-          ptx = px;
-          cols = Math.min(
-            14,
-            COLS_BASE +
-              Math.floor((level - 1) * 0.6) +
-              (W > 700 ? 1 : 0) +
-              (W > 1100 ? 1 : 0),
+          px = Math.max(mL, Math.min(W - mR - pw, px));
+          ptx = clamp(ptx, mL, W - mR - pw);
+          if (!bricks.length) {
+            cols = Math.min(
+              compact ? 10 : 14,
+              COLS_BASE +
+                Math.floor((level - 1) * 0.6) +
+                (W > 700 ? 1 : 0) +
+                (W > 1100 ? 1 : 0),
+            );
+            rows = Math.min(
+              compact ? 5 : 12,
+              ROWS_BASE +
+                Math.min(compact ? 1 : 6, level - 1) +
+                (H > 800 ? 1 : 0),
+            );
+          }
+          gridX = mL;
+          gridY = hudH + (compact ? 2 : 6);
+          const maxGridH = Math.max(36, py - br * 4 - gridY);
+          gap = Math.max(2, Math.min(7, W * 0.008));
+          bw = (fieldW - (cols - 1) * gap) / Math.max(1, cols);
+          bh = Math.max(
+            6,
+            Math.min(
+              compact ? 16 : 26,
+              (maxGridH - (rows - 1) * gap) / Math.max(1, rows),
+            ),
           );
-          rows = Math.min(
-            12,
-            ROWS_BASE + Math.min(6, level - 1) + (H > 800 ? 1 : 0),
-          );
-          gap = Math.max(3, Math.min(7, W * 0.008));
-          bw = (fieldW - (cols - 1) * gap) / cols;
-          bh = Math.max(14, Math.min(26, fieldH * 0.045));
-          gridX = m;
-          gridY = hudH + m * 0.4;
+          if (bricks.length) {
+            for (let i = 0; i < bricks.length; i++) {
+              const b = bricks[i];
+              b.x = gridX + b.c * (bw + gap);
+              b.y = gridY + b.r * (bh + gap);
+              b.w = bw;
+              b.h = bh;
+            }
+          }
           if (stuck) {
             bx = px + pw * 0.5;
             by = py - br - 1;
+          } else {
+            bx = clamp(bx, mL + br, W - mR - br);
+            by = clamp(by, insetT + br, py - br);
           }
         }
 
@@ -533,6 +725,8 @@
               if (level > 2 && (r + c + level) % 11 === 0) continue;
               const hp = r < 2 && level > 4 ? hpBase + 1 : hpBase;
               bricks.push({
+                c: c,
+                r: r,
                 x: gridX + c * (bw + gap),
                 y: gridY + r * (bh + gap),
                 w: bw,
@@ -567,6 +761,7 @@
           launched = 0;
           shake = 0;
           flash = 0;
+          bricks.length = 0;
           layoutPlay();
           makeBricks();
           resetBall();
@@ -577,6 +772,7 @@
         function nextLevel() {
           level++;
           combo = 0;
+          bricks.length = 0;
           layoutPlay();
           makeBricks();
           resetBall();
@@ -589,7 +785,7 @@
           levelEl.textContent = level;
           if (score > best) {
             best = score;
-            localStorage.setItem("nb_best", best);
+            saveBest(best);
           }
           bestEl.textContent = best;
           let html = "";
@@ -639,9 +835,6 @@
           }
         }
 
-        function clamp(v, a, b) {
-          return v < a ? a : v > b ? b : v;
-        }
         function launch() {
           if (state !== STATE.PLAY || !stuck) return;
           stuck = 0;
@@ -791,23 +984,25 @@
           const dist = speed * t;
           const n = Math.max(1, Math.min(8, Math.ceil(dist / maxS)));
           const st = t / n;
-          const m = Math.max(8, Math.min(W, H) * 0.02);
+          const mL = playL,
+            mR = playR,
+            mT = Math.max(playT, br);
           for (let s = 0; s < n; s++) {
             bx += bvx * st;
             by += bvy * st;
-            if (bx < br + m) {
-              bx = br + m;
+            if (bx < br + mL) {
+              bx = br + mL;
               bvx = Math.abs(bvx);
               spark(bx, by, 1, 0);
               sfx(6);
-            } else if (bx > W - m - br) {
-              bx = W - m - br;
+            } else if (bx > W - mR - br) {
+              bx = W - mR - br;
               bvx = -Math.abs(bvx);
               spark(bx, by, -1, 0);
               sfx(6);
             }
-            if (by < br + m * 0.2) {
-              by = br + m * 0.2;
+            if (by < br + mT) {
+              by = br + mT;
               bvy = Math.abs(bvy);
               spark(bx, by, 0, 1);
               sfx(6);
@@ -999,7 +1194,7 @@
               ctx.fillStyle = "rgba(244,247,255,.7)";
               ctx.font = "600 13px ui-sans-serif,system-ui,sans-serif";
               ctx.textAlign = "center";
-              ctx.fillText("TAP / SPACE TO LAUNCH", W * 0.5, py - 28);
+              ctx.fillText("CLICK / TAP / SPACE TO LAUNCH", W * 0.5, py - 28);
             }
           }
 
@@ -1054,8 +1249,7 @@
             const acc = 1400 + W * 0.4;
             if (keys.l) ptx -= acc * dt;
             if (keys.r) ptx += acc * dt;
-            const m = Math.max(8, Math.min(W, H) * 0.02);
-            ptx = clamp(ptx, m, W - m - pw);
+            ptx = clamp(ptx, playL, W - playR - pw);
             px += (ptx - px) * Math.min(1, dt * 22);
             stepPhysics(dt);
             stepFX(dt);
@@ -1073,19 +1267,10 @@
           requestAnimationFrame(loop);
         }
 
-        function pointerX(e) {
-          if (e.touches && e.touches.length) return e.touches[0].clientX;
-          if (e.changedTouches && e.changedTouches.length)
-            return e.changedTouches[0].clientX;
-          return e.clientX;
+        function canvasX(clientX) {
+          const r = cvs.getBoundingClientRect();
+          return ((clientX - r.left) / r.width) * W;
         }
-        function pointerY(e) {
-          if (e.touches && e.touches.length) return e.touches[0].clientY;
-          if (e.changedTouches && e.changedTouches.length)
-            return e.changedTouches[0].clientY;
-          return e.clientY;
-        }
-
         function onPointer(x) {
           ptx = x - pw * 0.5;
         }
@@ -1093,23 +1278,39 @@
         window.addEventListener(
           "mousemove",
           function (e) {
-            if (state === STATE.PLAY) onPointer(e.clientX);
+            if (state === STATE.PLAY) onPointer(canvasX(e.clientX));
           },
           { passive: true },
         );
+        window.addEventListener("mousedown", function (e) {
+          if (e.button !== 0) return;
+          if (e.target.closest && e.target.closest("button")) return;
+          if (state === STATE.PLAY) {
+            onPointer(canvasX(e.clientX));
+            launch();
+          }
+        });
 
+        function isUiTarget(el) {
+          return !!(el && el.closest && el.closest("button, a, input"));
+        }
         window.addEventListener(
           "touchstart",
           function (e) {
             audioCtx();
-            if (ac && ac.state === "suspended") ac.resume();
+            if (ac && ac.state === "suspended") {
+              try {
+                ac.resume();
+              } catch (e) {}
+            }
             if (!e.changedTouches.length) return;
+            if (isUiTarget(e.target)) return;
             const t = e.changedTouches[0];
             touchId = t.identifier;
             touchMoved = 0;
             touchSX = t.clientX;
             touchSY = t.clientY;
-            if (state === STATE.PLAY) onPointer(t.clientX);
+            if (state === STATE.PLAY) onPointer(canvasX(t.clientX));
           },
           { passive: true },
         );
@@ -1117,6 +1318,7 @@
         window.addEventListener(
           "touchmove",
           function (e) {
+            if (state === STATE.PLAY && e.cancelable) e.preventDefault();
             if (touchId == null) return;
             let t = null;
             for (let i = 0; i < e.changedTouches.length; i++)
@@ -1130,9 +1332,9 @@
               8
             )
               touchMoved = 1;
-            if (state === STATE.PLAY) onPointer(t.clientX);
+            if (state === STATE.PLAY) onPointer(canvasX(t.clientX));
           },
-          { passive: true },
+          { passive: false },
         );
 
         window.addEventListener(
@@ -1142,7 +1344,7 @@
             for (let i = 0; i < e.changedTouches.length; i++)
               if (e.changedTouches[i].identifier === touchId) ended = 1;
             if (!ended) return;
-            if (!touchMoved) {
+            if (!touchMoved && !isUiTarget(e.target)) {
               if (state === STATE.PLAY) launch();
             }
             touchId = null;
@@ -1152,9 +1354,13 @@
 
         window.addEventListener("keydown", function (e) {
           const k = e.key;
-          if (k === "ArrowLeft" || k === "a" || k === "A") keys.l = 1;
-          else if (k === "ArrowRight" || k === "d" || k === "D") keys.r = 1;
-          else if (k === " " || k === "Spacebar") {
+          if (k === "ArrowLeft" || k === "a" || k === "A") {
+            keys.l = 1;
+            e.preventDefault();
+          } else if (k === "ArrowRight" || k === "d" || k === "D") {
+            keys.r = 1;
+            e.preventDefault();
+          } else if (k === " " || k === "Spacebar") {
             e.preventDefault();
             if (state === STATE.PLAY) {
               if (stuck) launch();
@@ -1174,7 +1380,11 @@
 
         function action() {
           audioCtx();
-          if (ac && ac.state === "suspended") ac.resume();
+          if (ac && ac.state === "suspended") {
+            try {
+              ac.resume();
+            } catch (e) {}
+          }
           if (state === STATE.TITLE || state === STATE.OVER) {
             newGame();
             setState(STATE.PLAY);
@@ -1192,10 +1402,15 @@
         });
         muteBtn.addEventListener("click", function () {
           muted = !muted;
+          saveMute();
           muteBtn.textContent = muted ? "Sound Off" : "Sound On";
           if (!muted) {
             audioCtx();
-            if (ac && ac.state === "suspended") ac.resume();
+            if (ac && ac.state === "suspended") {
+              try {
+                ac.resume();
+              } catch (e) {}
+            }
           }
         });
 
@@ -1203,14 +1418,31 @@
         window.addEventListener(
           "orientationchange",
           function () {
-            setTimeout(fit, 80);
+            setTimeout(fit, 120);
+            setTimeout(fit, 400);
           },
           { passive: true },
         );
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", fit, {
+            passive: true,
+          });
+          window.visualViewport.addEventListener("scroll", fit, {
+            passive: true,
+          });
+        }
         document.addEventListener("visibilitychange", function () {
           if (document.hidden && state === STATE.PLAY) setState(STATE.PAUSE);
         });
+        window.addEventListener(
+          "contextmenu",
+          function (e) {
+            e.preventDefault();
+          },
+          { passive: false },
+        );
 
+        muteBtn.textContent = muted ? "Sound Off" : "Sound On";
         fit();
         startLoop();
         updateHUD();

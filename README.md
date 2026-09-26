@@ -7,11 +7,13 @@ Open `index.html` in a browser, or host the folder as a static site.
 ## Controls
 
 ### Desktop
+
 - Move paddle: mouse, `A` / `D`, or arrow keys
-- Launch ball / pause: `Space`
-- Pause / resume: `P` or `Esc`
+- Launch ball: click or `Space`
+- Pause / resume: `Space` (after launch), `P`, or `Esc`
 
 ### Mobile and tablet
+
 - Move paddle: drag
 - Launch ball: tap
 - Pause: on-screen pause control
@@ -25,9 +27,11 @@ Open `index.html` in a browser, or host the folder as a static site.
 - Multi-hit bricks on later stages (all bricks remain breakable)
 - Pooled particles, ball trail, screen shake, dynamic gradient
 - Web Audio tones (no audio files): brick, paddle, wall, game over
-- Full-viewport canvas with DPR scaling and iPhone safe-area insets
+- Full-viewport canvas with DPR scaling, visualViewport, and iPhone safe-area insets
 - Portrait and landscape, keyboard, mouse, and touch
+- Compact HUD on short landscape phones
 - `prefers-reduced-motion` reduces particles and trails
+- Best score and mute persist in localStorage (private-mode safe)
 
 ## Tech
 
@@ -39,7 +43,7 @@ Open `index.html` in a browser, or host the folder as a static site.
 ## GitHub Pages
 
 1. Create a GitHub repository.
-2. Upload `index.html` and `README.md` to the repository root.
+2. Upload `index.html`, `README.md`, and `.nojekyll` to the repository root.
 3. Open **Settings → Pages**.
 4. Set source to **Deploy from a branch**.
 5. Choose `main` (or `master`) and folder `/ (root)`.
