@@ -1,8 +1,8 @@
 # NEON BREAK
 
-[![pages](https://github.com/OWNER/REPO/actions/workflows/pages.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/pages.yml)
+[![pages](https://github.com/SiliconValley007/BrickBreaker/actions/workflows/pages.yml/badge.svg)](https://github.com/SiliconValley007/BrickBreaker/actions/workflows/pages.yml)
 
-Zero-dependency neon Breakout for GitHub Pages. Canvas, ES modules, seeded dailies, bosses, adaptive audio, offline PWA, strict CSP. Live: `https://OWNER.github.io/REPO/` (or your `CNAME` host).
+Zero-dependency neon Breakout for GitHub Pages. Canvas, ES modules, seeded dailies, bosses, adaptive audio, offline PWA, strict CSP. Live: `https://SiliconValley007.github.io/BrickBreaker/` (or your `CNAME` host).
 
 ## Controls
 

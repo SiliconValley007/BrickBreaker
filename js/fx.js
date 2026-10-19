@@ -50,16 +50,16 @@ export function createFX(G) {
     n = Math.ceil(n * qualityScale());
     for (var i = 0; i < n; i++) {
       var p = particles[pHead++ % MAX_P];
-      var a = Math.random() * Math.PI * 2,
+      var a = Math.random() * Math.PI * 2, // cosmetic
         sp = (spd || 200) * (0.3 + Math.random()); // cosmetic
       p.a = 1;
       p.x = x;
       p.y = y;
       p.vx = Math.cos(a) * sp;
       p.vy = Math.sin(a) * sp - 40;
-      p.l = 0.28 + Math.random() * 0.45;
+      p.l = 0.28 + Math.random() * 0.45; // cosmetic
       p.m = p.l;
-      p.s = 1.4 + Math.random() * 2.6;
+      p.s = 1.4 + Math.random() * 2.6; // cosmetic
       p.c = col; // cosmetic
     }
   }
@@ -72,7 +72,7 @@ export function createFX(G) {
       p.y = y;
       p.vx = nx * (80 + Math.random() * 160) + (Math.random() - 0.5) * 80; // cosmetic
       p.vy = ny * (80 + Math.random() * 160) + (Math.random() - 0.5) * 80; // cosmetic
-      p.l = 0.12 + Math.random() * 0.18;
+      p.l = 0.12 + Math.random() * 0.18; // cosmetic
       p.m = p.l; // cosmetic
     }
   }
@@ -95,7 +95,7 @@ export function createFX(G) {
     e.y = y;
     e.vx = -vx * 0.12 + (Math.random() - 0.5) * 28; // cosmetic
     e.vy = -vy * 0.12 + (Math.random() - 0.5) * 28; // cosmetic
-    e.l = 0.08 + Math.random() * 0.1;
+    e.l = 0.08 + Math.random() * 0.1; // cosmetic
     e.m = e.l;
     e.s = 0.7 + Math.random() * 1.4; // cosmetic
     e.c = fire

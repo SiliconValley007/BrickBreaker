@@ -280,7 +280,7 @@ const lock = JSON.parse(readFileSync(join(root, "package-lock.json"), "utf8"));
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 ok(
   lock.lockfileVersion === 3 &&
-    lock.packages["node_modules/playwright"].version === "1.55.0",
+    lock.packages["node_modules/playwright"].version === "1.64.1",
   "lockfile",
 );
 ok(

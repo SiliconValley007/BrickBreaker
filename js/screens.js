@@ -8,28 +8,10 @@ import {
 } from "./ui.js";
 import { endDaily } from "./daily.js";
 import { worldOf } from "./levels.js";
+import { createConfig } from "./config.js";
+import { watchEnv, registerSW } from "./env.js";
 
-export function createConfig() {
-  var reduceMQ =
-    window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)");
-  var motionStored = lsGet("nb_motion");
-  return {
-    vol: Math.max(0, Math.min(100, loadNum("nb_vol", 70))),
-    mute: loadBool("nb_mute", false),
-    shake: loadBool("nb_shake", true),
-    hitstop: loadBool("nb_hit", true),
-    haptics: loadBool("nb_haptics", true),
-    motion:
-      motionStored == null
-        ? !!(reduceMQ && reduceMQ.matches)
-        : motionStored === "1",
-    cb: loadBool("nb_cb", false),
-    bloom: loadBool("nb_bloom", true),
-    chroma: loadBool("nb_chroma", true),
-    mus: Math.max(0, Math.min(100, loadNum("nb_mus", 70))),
-    sfx: Math.max(0, Math.min(100, loadNum("nb_sfx", 70))),
-  };
-}
+export { createConfig };
 
 export function createScreens(G) {
   var cfg = G.cfg;
@@ -378,49 +360,14 @@ export function createScreens(G) {
     if ($id("volSfx")) $id("volSfx").value = cfg.sfx;
     if ($id("diffSel")) $id("diffSel").value = G.diffKey;
     nameIn.value = (lsGet("nb_init") || "AAA").slice(0, 3).toUpperCase();
-    var contrastMQ =
-      window.matchMedia && matchMedia("(prefers-contrast: more)");
-    function syncContrast() {
-      document.documentElement.classList.toggle(
-        "hc",
-        !!(contrastMQ && contrastMQ.matches),
-      );
-    }
-    syncContrast();
-    if (contrastMQ && contrastMQ.addEventListener)
-      contrastMQ.addEventListener("change", syncContrast);
-    var reduceMQ =
-      window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduceMQ && reduceMQ.addEventListener)
-      reduceMQ.addEventListener("change", function () {
-        if (lsGet("nb_motion") == null) {
-          cfg.motion = reduceMQ.matches;
-          G.reduce = cfg.motion;
-          syncSwitch($id("swMotion"), cfg.motion);
-        }
-      });
+    watchEnv(G, cfg);
     if (location.search.indexOf("daily=1") >= 0 && panels.daily)
       setPanel("daily");
     else if (!loadBool("nb_tut", false) && panels.tut) setPanel("tut");
     else setPanel("title");
     var verEl = $id("appVer");
     if (verEl) verEl.textContent = APP_VER;
-    if (navigator.serviceWorker && location.protocol !== "file:") {
-      navigator.serviceWorker
-        .register("sw.js")
-        .then(function (reg) {
-          if (reg.waiting) showSwToast();
-          reg.addEventListener("updatefound", function () {
-            var w = reg.installing;
-            if (!w) return;
-            w.addEventListener("statechange", function () {
-              if (w.state === "installed" && navigator.serviceWorker.controller)
-                showSwToast();
-            });
-          });
-        })
-        .catch(function () {});
-    }
+    registerSW(showSwToast);
   }
 
   G.action = action;

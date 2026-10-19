@@ -13,10 +13,10 @@ export function createRender(G) {
   var i;
   for (i = 0; i < MAX_STARS; i++) {
     stars[i] = {
-      x: Math.random(),
-      y: Math.random(),
-      z: 0.25 + Math.random() * 0.75,
-      s: Math.random(),
+      x: Math.random(), // cosmetic
+      y: Math.random(), // cosmetic
+      z: 0.25 + Math.random() * 0.75, // cosmetic
+      s: Math.random(), // cosmetic
     }; // cosmetic
   }
 

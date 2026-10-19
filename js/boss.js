@@ -25,7 +25,7 @@ export function damageBoss(G, d) {
   boss.hp -= d;
   boss.hurt = 0.15;
   G.burst(
-    boss.x + Math.random() * boss.w,
+    boss.x + Math.random() * boss.w, // cosmetic
     boss.y + boss.h * 0.5,
     "#ff2bd6",
     8,
