@@ -1,0 +1,19 @@
+{
+  "name": "neon-break",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NEON BREAK - zero-dependency neon Breakout PWA for GitHub Pages.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node tests/run.mjs",
+    "build": "node scripts/build.mjs",
+    "e2e": "node tests/e2e.mjs",
+    "check": "npm test && npm run build && npm run e2e"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
+  }
+}

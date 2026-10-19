@@ -1,0 +1,69 @@
+name: pages
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Resolve site URL
+        run: |
+          if [ -f CNAME ]; then
+            HOST=$(head -n1 CNAME | tr -d '[:space:]' | sed -E 's#^https?://##; s#/+$##')
+            echo "SITE_URL=https://${HOST}" >> "$GITHUB_ENV"
+          elif [ -n "${VARS_SITE_URL}" ]; then
+            echo "SITE_URL=${VARS_SITE_URL}" >> "$GITHUB_ENV"
+          else
+            REPO="${GITHUB_REPOSITORY##*/}"
+            OWNER="${GITHUB_REPOSITORY_OWNER}"
+            if [ "${REPO}" = "${OWNER}.github.io" ]; then
+              echo "SITE_URL=https://${OWNER}.github.io" >> "$GITHUB_ENV"
+            else
+              echo "SITE_URL=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_ENV"
+            fi
+          fi
+        env:
+          VARS_SITE_URL: ${{ vars.SITE_URL }}
+      - name: Check
+        run: npm run check
+        env:
+          E2E_BASE: ${{ format('/{0}/', github.event.repository.name) }}
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/configure-pages@v5
+      - id: deploy
+        uses: actions/deploy-pages@v4
